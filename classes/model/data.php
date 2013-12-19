@@ -515,6 +515,17 @@ public function send_email($email_data, $bcc="",$pdf_created="") {
 			case 'CustomLists' : 			$this->update_custom_lists($content);
 					break;
 		}
+		require_once Kohana::find_file('classes', 'library/Versioning');
+		$version_lib 	= 	new Versioning;
+		if(isset($_SESSION['company_id']) && !empty($_SESSION['company_id'])) { 
+			$group = $version_lib->set_group_to_user($_SESSION['company_id']);
+			if(isset($_SESSION['group']) && !empty($_SESSION['group'])) {
+				unset($_SESSION['group']);
+				$_SESSION['group'] = $group;
+			}else{
+				$_SESSION['group'] = $group;
+			}
+		}
 		return true;
 	}
 	

@@ -39,7 +39,6 @@ class Controller_Timesheet extends Controller_Template
 		$activity_model			=	new Model_activity;
 		$data_model				=	new Model_data;
 		$dharmausers_m			=	new Model_Dharmausers;
-		$employee_m				=	new Model_Employee;
 		$arr_week_date			=	array();
 
 		// calculate week start month
@@ -156,7 +155,7 @@ class Controller_Timesheet extends Controller_Template
 		$this->template->content 			= 	View::factory('timesheet/list',$timesheet_list)
 												->set( 'data_names', $data_names)
 												//->set('payroll', $activity_model->get_payroll())
-												->set( 'employee_list', $employee_m->get_all_employees())
+												->set( 'employee_list', $dharmausers_m->get_all_employees())
 												->set('payroll_flag', $dharmausers_m->get_payroll_flag())
 												->set('week_start_date', $timestamp_start);
 	} catch(Exception $e) {die($e->getMessage());}

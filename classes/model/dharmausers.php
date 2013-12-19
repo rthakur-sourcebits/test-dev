@@ -23,6 +23,7 @@
  * 			25.11.2013 	: Added function get_user_info_by_active_id from admin.php
  * 			25.11.2013 	: Added function get_payroll_flag from admin.php
  * 			25.11.2013 	: Added function get_employees from admin.php
+ * 			19.12.2013	: Added function get_all_employees
  * 
   */
  
@@ -524,6 +525,4 @@ class Model_Dharmausers extends Model
 			return $data;
 		}
 	}
-	
-
 }

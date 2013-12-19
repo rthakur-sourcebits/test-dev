@@ -292,7 +292,7 @@ class Controller_Aecapibrowser extends Controller
 				if(isset($aec_updates[0])){ // AEC update reply for presentation 
 					$presentation = NULL;
 					foreach ($aec_updates[0] as $key => $value) {
-						$presentation[$key] = $value;	
+						$presentation[$key] = $value;
 					}
 				}else{
 					$presentation[0]['operation']=0;

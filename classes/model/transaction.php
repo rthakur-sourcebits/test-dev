@@ -70,14 +70,16 @@ class Model_Transaction extends Model
 	}
 	
 	// Get transaction paid by cash
+	/*
 	public function get_cash_transaction($sale_id) {
-		$sql	=	"SELECT co.id, co.customer_id, co.total_amount, co.created_date,
-							c.record_id, c.company_or_lastname, c.firstname, c.zip
-					 FROM cash_order co LEFT JOIN customers c ON(c.id = co.customer_id)
-					 WHERE co.sale_id = '".$sale_id."'";
-		$result	=	DB::query(Database::SELECT, $sql)->execute()->as_array();
-		return $result;
-	}
+			$sql	=	"SELECT co.id, co.customer_id, co.total_amount, co.created_date,
+								c.record_id, c.company_or_lastname, c.firstname, c.zip
+						 FROM cash_order co LEFT JOIN customers c ON(c.id = co.customer_id)
+						 WHERE co.sale_id = '".$sale_id."'";
+			$result	=	DB::query(Database::SELECT, $sql)->execute()->as_array();
+			return $result;
+		}*/
+	
 	
 	public function check_payment_exists($sale_id){
 		$sql	=	"(SELECT id

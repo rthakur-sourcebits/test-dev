@@ -38,8 +38,7 @@ class Controller_Activitysheet extends Controller_Template
 		$activity_sheet			= 	new Model_Activitysheet;
 		$obj_user				=	new Model_User;
 		$data_model             =   new Model_Data;
-		$employee_m				=	new Model_Employee;
-		$dharmausers_m			=	new Model_Dharmausers;
+		$dharmausers_m			= 	new Model_Dharmausers;
 		
 		unset($_SESSION['week_start_date']);
 		$activity_list['activity_list']                 =	$activity_sheet->read_activity_log(1);
@@ -51,7 +50,7 @@ class Controller_Activitysheet extends Controller_Template
 		     if(isset($_SESSION['admin_user']) && $_SESSION['admin_user'] == "1") {
                     $this->template->content = View::factory('activity/list',$activity_list)
                                             ->set('username', $obj_user->get_logged_user_name())
-                                            ->set('employee_list', $employee_m->get_all_employees())
+                                            ->set('employee_list', $dharmausers_m->get_all_employees())
                                             ->set('count_slips', $activity_count)
                                             ->set('per_slip', isset($_POST['view_per_page'])?$_POST['view_per_page']:10)
                                             ->set('page', isset($_POST['page'])?$_POST['page']:0);

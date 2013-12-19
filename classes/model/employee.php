@@ -201,5 +201,28 @@ class Model_Employee extends Model
 		}
 	}
 	
-	
+/**
+	 * @Method		:	get_all_employees
+	 * @Description	:	Function to get all employees wheather active or in-active.
+	 * @Return		:	if success array else NULL
+	 */
+	public function get_all_employees(){
+		if(isset($_SESSION['admin_user']) && $_SESSION['admin_user'] == "1") {
+			$sql	=	"SELECT id, record_id, concat(first_name,' ',company_or_last_name)as name
+						FROM employees
+						WHERE company_id = '".addslashes($_SESSION['company_id'])."' ORDER BY first_name ASC";
+			
+		} else {
+			$sql	=	"SELECT id, record_id, concat(first_name,' ',company_or_last_name)as name
+						FROM employees
+						WHERE company_id = '".addslashes($_SESSION['company_id'])."' 
+						AND record_id = '".addslashes($_SESSION['employee_id'])."' ORDER BY first_name ASC";
+		}
+		$data	=	DB::query(Database::SELECT, $sql)->execute()->as_array();
+		if(empty($data)){
+			return NULL;
+		}else{
+			return $data;
+		}
+	}
 }

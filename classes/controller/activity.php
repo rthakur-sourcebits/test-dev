@@ -36,8 +36,7 @@ class Controller_Activity extends Controller_Template
 			$activity_sheet 			= 	new Model_activitysheet;
 			$data_model 				= 	new Model_data;
 			$json		 				= 	new Model_json;
-			$dharmausers_m			=	new Model_Dharmausers;
-			$employee_m					=	new Model_Employee;
+			$dharmausers_m				=	new Model_Dharmausers;
 			
 			$this->template->title		= 	"New Activity Slip";
 			$this->template->styles		=	array();
@@ -91,7 +90,7 @@ class Controller_Activity extends Controller_Template
 			$this->template->content = 	View::factory('activity/create')
 										->set( 'payroll_flag',	$dharmausers_m->get_payroll_flag())
 										->set( 'data_names', $data_names)
-										->set( 'employee_list', $employee_m->get_all_employees())
+										->set( 'employee_list', $dharmausers_m->get_all_employees())
 										->set( 'slip_last_date', $last_slipdate)
 										->set( 'linked_job', $dharmausers_m->get_show_jobs())
 										->set( 'slip',	isset($slip[0])?$slip[0]:null)

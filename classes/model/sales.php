@@ -674,15 +674,17 @@ class Model_Sales extends Model
 	}
 	
 	// Function to get transaction details
+	/*
 	public function get_sales_cash_details($sale_id) {
-		$sql	=	"SELECT co.total_amount, co.change, co.name, co.note, co.created_date,
-							c.company_or_lastname
-					 FROM cash_order co LEFT JOIN customers c ON(co.customer_id = c.id)
-					 WHERE co.sale_id = '".addslashes($sale_id)."'
-					";
-		$result		=	DB::query(Database::SELECT, $sql)->execute()->as_array();
-		return $result;
-	}
+			$sql	=	"SELECT co.total_amount, co.change, co.name, co.note, co.created_date,
+								c.company_or_lastname
+						 FROM cash_order co LEFT JOIN customers c ON(co.customer_id = c.id)
+						 WHERE co.sale_id = '".addslashes($sale_id)."'
+						";
+			$result		=	DB::query(Database::SELECT, $sql)->execute()->as_array();
+			return $result;
+		}*/
+	
 	
 	// Function to get sales by AJAX call
 	public function paginated_sales($start, $end, $field="created_date", $order="DESC",$filter) {

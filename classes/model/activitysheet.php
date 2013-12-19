@@ -5,6 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
  * 	@Class			: Model_Activitysheet
  * 	@Created date	: 30/Aug/2010
  * 	@Descritpion	: Activity model which reads the user activity table and return back to the Controller.
+ * 					17.12.2013 Added this function count_activity_log 	
  */
 class Model_Activitysheet extends Model {
 
@@ -16,6 +17,27 @@ class Model_Activitysheet extends Model {
 	{
 		// load database library into $this->db (can be omitted if not required)
 		parent::__construct($id);
+	}
+	
+	/*
+	 * 	@Function 		: count_activity_log
+	 * 	@Description	: get the count of activity log of employee of company.
+	 * 	
+	 */
+	public function count_activity_log($emp_record_id, $company_id){
+		$select_sql	=	'	SELECT count(RecordID)
+							FROM activity_slip_lists
+							WHERE 	company_id ='.$company_id.' AND
+									EmployeeRecordID = '.$emp_record_id;
+		$query		=	DB::query(Database::SELECT, $select_sql);
+		$order_slips=	$query->execute()->as_array();
+		
+		if(isset($order_slips[0]['count(RecordID)']) && !empty($order_slips[0]['count(RecordID)'])){
+			return $order_slips[0]['count(RecordID)'];
+		}else{
+			return 0;
+		}
+			
 	}
 	/*
 	 * 	@Function 		: read_activity_log()
@@ -37,6 +59,7 @@ class Model_Activitysheet extends Model {
 				case 2: $where_sync_view	= "";
 						break;
 			}
+                        
 			if(isset($_POST['act_search'])) 
 			{	
 				$search_val	=	addslashes(trim(htmlentities($_POST['act_search'])));
@@ -105,7 +128,7 @@ class Model_Activitysheet extends Model {
 							case 2: $admin_check	= "";
 									break;
 						}
-						$sel_query	=	"SELECT * 
+						$sel_query	=           "SELECT * 
 										 FROM activity_slip_lists 
 										 WHERE EmployeeRecordID = '".$_SESSION['employee_id']."'
 										 $admin_check 
@@ -113,6 +136,8 @@ class Model_Activitysheet extends Model {
 										 AND Units != 0
 										 $where_sync_view
 										 ORDER BY SlipDate DESC";
+                                                
+                                                
 					}
 				}catch(Exception $e){
 					die($e->getMessage());
@@ -145,6 +170,7 @@ class Model_Activitysheet extends Model {
 													   '2' 	=> 'ActivitySync'		
 													   )
 											));
+											
 		return $arr_slips;
 		}catch(Exception $e) { die($e->getFile());}
 	}
@@ -433,7 +459,7 @@ class Model_Activitysheet extends Model {
 		// update sync status in the table sync_process
 		$sql				=	"INSERT INTO sync_process (company_id) VALUES ('".$_SESSION['company_id']."')";
 		$qresult			=	$this->_db->query(Database::INSERT, $sql, False);
-		
+
 		$activity_file		=	"ActivitySlips".$qresult[0].".json";
 		$json->file_content	=	$sync_slips;
 
