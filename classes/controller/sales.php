@@ -2091,7 +2091,7 @@ class Controller_Sales extends Controller_Template {
 	 * @Param		:	int
 	 */ 
 	public function action_sync($sale_id) {
-		$obj_sales	=	new Model_Sales;
+		$obj_sales	=	new Model_Sales;	
 		$sale_info	=	$obj_sales->get_sale_full_details($sale_id);
 		if(empty($sale_info)) Request::instance()->redirect(SITEURL.'/sales');
 		switch($sale_info[0]['type']) {
@@ -2270,7 +2270,7 @@ class Controller_Sales extends Controller_Template {
 																	),
 								"TypeOfSale"					=>  "Item",
 								"InvoiceNumber"					=>  "",
-								"JournalMemo"					=>  $sale_info['sale_number'],
+								"JournalMemo"					=>  "AE Cloud Sales# ".$sale_info['sale_number'],
 								"ThirdPartyUniqueID"			=>	$sale_info['id']				// Need to add record id in sales table and do it as per customers and jobs
 								//"NameOnCard"					=>  $sale_info['name_on_card'],
 								//"CreditOrDebitCardNumber"		=>  $sale_info['last_digits_on_card'],
@@ -2366,7 +2366,7 @@ class Controller_Sales extends Controller_Template {
 																	),
 								"TypeOfSale"					=>  "Service",
 								"InvoiceNumber"					=>  "",
-								"JournalMemo"					=>  $sale_info['sale_number'],
+								"JournalMemo"					=>  "AE Cloud Sales# ".$sale_info['sale_number'],
 								"ThirdPartyUniqueID"			=>	$sale_info['id']			// Need to add record id in sales table and do it as per customers and jobs
 								//"NameOnCard"					=>  $sale_info['name_on_card'],
 								//"CreditOrDebitCardNumber"		=>  $sale_info['last_digits_on_card'],
@@ -2459,7 +2459,7 @@ class Controller_Sales extends Controller_Template {
 																	),
 								"TypeOfSale"					=>  "TimeBilling",
 								"InvoiceNumber"					=>  "",
-								"JournalMemo"					=>  $sale_info['sale_number'],
+								"JournalMemo"					=>  "AE Cloud Sales# ".$sale_info['sale_number'],
 								"ThirdPartyUniqueID"			=>	$sale_info['id']				// Need to add record id in sales table and do it as per customers and jobs
 								//"NameOnCard"					=>  $sale_info['name_on_card'],
 								//"CreditOrDebitCardNumber"		=>  $sale_info['last_digits_on_card'],
@@ -2514,12 +2514,14 @@ class Controller_Sales extends Controller_Template {
 																				"Year"	=> $receipt_date[0]
 																			),
 										"ThirdPartyUniqueID"			=>  $transaction[0]['id'],
-										"DepositAccount"				=>  $transaction[0]['deposit_account'],
-										"AVSPostalCode"					=>  $transaction[0]['zip'],
 										"Lines"							=>  array(
+																				array(
 																				"ThirdPartyInvoiceID"	=>	$sale_id,
 																				"AmountApplied"			=>	"$".$transaction[0]['transaction_amount']
-																			)
+																				)
+																			),
+										"DepositAccount"				=>  $transaction[0]['deposit_account'],
+										"AVSPostalCode"					=>  $transaction[0]['zip']
 				);
 				if(!empty($transaction[0]['gateway_transaction_status'])){
 					$arr_payment[0]["ACHAuthorizationStatus"]	=	$transaction[0]['gateway_transaction_status'];
@@ -2556,11 +2558,16 @@ class Controller_Sales extends Controller_Template {
 										"ThirdPartyUniqueID"		=>  $transaction[0]['id'],
 										"DepositAccount"			=>  $transaction[0]['deposit_account'],
 										"Lines"						=>  array(
+																			array(
 																			"ThirdPartyInvoiceID"	=>	$sale_id,
 																			"AmountApplied"			=>	"$".$transaction[0]['transaction_amount']
+																			)
 																		)
 									);
 				if($transaction[0]['payment_method']=='Check'){
+					if($transaction[0]['check_num'] == 0){
+						$transaction[0]['check_num'] = '';
+					}					
 					$arr_payment[0]["CheckNumber"]	=  $transaction[0]['check_num'];
 				}
 			}
@@ -2709,7 +2716,7 @@ class Controller_Sales extends Controller_Template {
 			$sale_id 		= 	$sale_info[0]['id'];
 		 	$customer_id	= 	$sale_info[0]['customer_id'];
 			$amount			= 	!empty($_POST['paid_today'])? $_POST['paid_today']: 0;
-			$check_num		= 	!empty($_POST['check_number'])? $_POST['check_number']: 0;
+			$check_num		= 	!empty($_POST['check_number'])? $_POST['check_number']: '';
 			switch($_POST['card_type']){
 				case 0	: $note_str = 'cash-notes';break;
 				case 1	: $note_str = 'check-notes';break;
@@ -3052,26 +3059,28 @@ class Controller_Sales extends Controller_Template {
 	 * @Function	:	action_paybycash
 	 * @Description	: 	Payment details saving through cash
 	 */
+	/*
 	public function action_paybycash() {
-		$sales			=	new Model_Sales;
-		$total_amount	=	$_POST['total_amount'];
-		$change			=	($_POST['change'] == "")?0:$_POST['change'];
-		$name			=	$_POST['name'];
-		$note			=	$_POST['note'];
-		$paid_amount	=	doubleval($total_amount)+doubleval($change);
-		$coulmn			=	array("sale_id", "customer_id", "employee_id", "total_amount", "change", "name", "note", "created_date");
-		$data			=	array($_POST['sale_id'], $_POST['customer_id'], $_SESSION['employee_id'], $total_amount, $change, $name, $note, date("Y-m-d H:i:s"));
-		$order			=	$sales->save('cash_order', $coulmn, $data);
-		$sale_info		= 	$sales->get_sale_details($_POST['sale_id']);
-		$balance_amount	=	(doubleval($sale_info[0]['total_payment'])-$paid_amount);
-		$data			=	array(	"payment" => "2",
-									"paid_today" => $paid_amount,
-									"updated_date"	=> date("Y-m-d H:i:s"),
-									"balance"	=>	$balance_amount
-							);
-		$order			=	$sales->update('sales', $data, $_POST['sale_id']);
-		Request::instance()->redirect(SITEURL.'/sales/success');
-	}
+			$sales			=	new Model_Sales;
+			$total_amount	=	$_POST['total_amount'];
+			$change			=	($_POST['change'] == "")?0:$_POST['change'];
+			$name			=	$_POST['name'];
+			$note			=	$_POST['note'];
+			$paid_amount	=	doubleval($total_amount)+doubleval($change);
+			$coulmn			=	array("sale_id", "customer_id", "employee_id", "total_amount", "change", "name", "note", "created_date");
+			$data			=	array($_POST['sale_id'], $_POST['customer_id'], $_SESSION['employee_id'], $total_amount, $change, $name, $note, date("Y-m-d H:i:s"));
+			$order			=	$sales->save('cash_order', $coulmn, $data);
+			$sale_info		= 	$sales->get_sale_details($_POST['sale_id']);
+			$balance_amount	=	(doubleval($sale_info[0]['total_payment'])-$paid_amount);
+			$data			=	array(	"payment" => "2",
+										"paid_today" => $paid_amount,
+										"updated_date"	=> date("Y-m-d H:i:s"),
+										"balance"	=>	$balance_amount
+								);
+			$order			=	$sales->update('sales', $data, $_POST['sale_id']);
+			Request::instance()->redirect(SITEURL.'/sales/success');
+		}*/
+	
 	
 	/**
 	 * @Access		:	public
@@ -3781,7 +3790,7 @@ class Controller_Sales extends Controller_Template {
 		
 		$sale_info	=	$sale_m->get_sale_by_id($sale_id, $_SESSION['company_id']);
 		if(isset($sale_info[0]['sync_status']) && $sale_info[0]['sync_status'] == '0' ){
-			if($card_type == 'credit'){ // Remove sale from transaction
+			if($card_type == CREDIT_CARD){ // Remove sale from transaction
 				$transaction_m->delete_sales_transaction('transaction', $sale_id);
 			} else { // Remove sale from transaction other.
 				$transaction_m->delete_sales_transaction('transaction_other', $sale_id);

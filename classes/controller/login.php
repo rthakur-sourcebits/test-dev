@@ -115,17 +115,7 @@ class Controller_Login extends Controller_Template {
 		} else { // checking dharma users.
 			$result = $users -> verify_users($email, $password);
 			// Set Company Group.
-			require_once Kohana::find_file('classes', 'library/Versioning');
-			$version_lib 	= 	new Versioning;
-			if(isset($result[0]) && !empty($result[0])) { 
-				$group = $version_lib->set_group_to_user($result[0]['company_id']);
-				if(!isset($_SESSION['group']) && empty($_SESSION['group'])) {
-					$_SESSION['group']	=	$group;
-				}
-			}
 		}
-		
-		
 		
 		if ($result) {
 			if ($result[0]['status'] == 0) {
@@ -239,14 +229,8 @@ class Controller_Login extends Controller_Template {
 		$action 	= "view";
 		$key_info 	= $admin_m->get_admin_consumer($email, $password);
 		// Set Company Group.
-		require_once Kohana::find_file('classes', 'library/Versioning');
-		$version_lib 	= 	new Versioning;
-		if(isset($key_info[0]) && !empty($key_info[0])) { 
-			$group = $version_lib->set_group_to_user($key_info[0]['company_id']);
-			if(!isset($_SESSION['group']) && empty($_SESSION['group'])) {
-				$_SESSION['group']	=	$group;
-			}
-		}
+		//require_once Kohana::find_file('classes', 'library/Versioning');
+		
 		if (empty($key_info))	// getting the consumer-key and consumer secret-key based on the company name.
 		{
 			return false;
